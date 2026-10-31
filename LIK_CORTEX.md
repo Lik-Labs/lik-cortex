@@ -1,0 +1,11 @@
+# Lik Cortex: initial Graphiti extension
+
+This fork adds a bounded prototype, not a complete product twin. Graphiti remains Apache-2.0; retain its LICENSE and notices. Its extraction uses an LLM, so edges are claims, not verified contracts or proof of causality.
+
+`graphiti_core.lik_cortex.core` defines product entity types and an `Evidence` envelope for specs, code, screens, contracts, observations, decisions and agent episodes. Supply source URI, immutable revision, locator, content and timezone-aware observation time. `ingest(client, evidence, group_id)` invokes Graphiti's episode pipeline with these types and preserves the envelope in the episode. Each caller must implement source collection, authorization, redaction and change detection; this is an ingestion interface, not a GitHub sync. Never send secrets or private Lik sources to public repositories or unauthorized LLM services.
+
+`context` runs Graphiti hybrid search in one explicit group. When given a center node, it traverses only the retrieved edges, in both directions, up to five hops; this is not complete graph traversal or an impact guarantee. Results retain Graphiti edge timestamps and episode IDs. Use the existing MCP `get_episode_entities` to inspect evidence associations; retrieve and verify source content separately. The MCP server adds `lik_product_context`, alongside its existing search and episode tools. Start and configure it as documented in `mcp_server/README.md`; use an isolated database and an authorized LLM provider. A group ID is a namespace filter, not an authorization boundary.
+
+The first slice does not implement deterministic code indexing, executable contract validation, runtime collection, version reconciliation, access control, automatic sync, full-graph traversal or a historical as-of query. Graphiti's temporal edge fields describe extracted claims, not independently verified truth. Conflict resolution, deletion, retries/idempotency, evidence retention and provenance fidelity require live integration tests before operational use.
+
+Install this fork's `graphiti-core` into the MCP server environment (rather than the published upstream package) before starting the server; the MCP server has its own dependency environment. The MCP tool has not yet been exercised against a live server or database.

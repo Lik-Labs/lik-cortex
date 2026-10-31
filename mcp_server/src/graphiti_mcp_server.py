@@ -613,6 +613,34 @@ async def search_nodes(
 
 
 @mcp.tool()
+async def lik_product_context(
+    query: str,
+    group_id: str,
+    center_node_uuid: str | None = None,
+    max_facts: int = 20,
+    max_hops: int = 2,
+) -> dict:
+    """Retrieve a bounded, evidence-linked Lik product subgraph within one group.
+
+    Reachability is limited to facts returned by hybrid search, not the full graph.
+    Episode IDs in facts can be inspected with get_episode_entities.
+    """
+    from graphiti_core.lik_cortex.core import context
+
+    if graphiti_service is None:
+        return {'error': 'Graphiti service not initialized'}
+    try:
+        client = await graphiti_service.get_client()
+        edges = await context(client, query, group_id, center_node_uuid, max_facts, max_hops)
+        return {
+            'facts': [format_fact_result(edge) for edge in edges],
+            'scope': 'reachable within retrieved search results',
+        }
+    except ValueError as exc:
+        return {'error': str(exc)}
+
+
+@mcp.tool()
 async def search_memory_facts(
     query: str,
     group_ids: str | list[str] | None = None,
